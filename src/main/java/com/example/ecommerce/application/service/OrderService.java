@@ -1,4 +1,4 @@
-package com.example.ecommerce.domain.service;
+package com.example.ecommerce.application.service;
 
 import com.example.ecommerce.domain.model.Inventory;
 import com.example.ecommerce.domain.model.Order;
