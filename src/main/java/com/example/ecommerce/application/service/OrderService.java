@@ -1,8 +1,10 @@
 package com.example.ecommerce.application.service;
 
+import com.example.ecommerce.domain.event.OrderCreatedEvent;
 import com.example.ecommerce.domain.model.Inventory;
 import com.example.ecommerce.domain.model.Order;
 import com.example.ecommerce.domain.ports.in.OrderUseCase;
+import com.example.ecommerce.domain.ports.out.EventPublisher;
 import com.example.ecommerce.domain.ports.out.InventoryRepository;
 import com.example.ecommerce.domain.ports.out.OrderRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +17,14 @@ public class OrderService implements OrderUseCase {
 
     private final OrderRepository orderRepository;
     private final InventoryRepository inventoryRepository;
+    private final EventPublisher eventPublisher;
 
     public OrderService(OrderRepository orderRepository,
-                        InventoryRepository inventoryRepository) {
+                        InventoryRepository inventoryRepository,
+                        EventPublisher eventPublisher) {
         this.orderRepository = orderRepository;
         this.inventoryRepository = inventoryRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -35,6 +40,7 @@ public class OrderService implements OrderUseCase {
         Order order = new Order(UUID.randomUUID());
         order.reserveInventory();
 
+        eventPublisher.publish(new OrderCreatedEvent(order.getId()));
         return orderRepository.save(order);
     }
 
